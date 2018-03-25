@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Hello~WeiBo~
+                    Hello~WeiBo In StarKyle~
                 </div>
 
                 <div class="links">

@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Hello~WeiBo In StarKyle~!!
+                    Hello~WeiBo In StarKyle~welcome.blade.php!!
                 </div>
 
                 <div class="links">

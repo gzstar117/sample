@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Status;
+use Auth;
 
 class StatusesController extends Controller
 {
@@ -16,7 +17,7 @@ class StatusesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'content' => 'require|max:140'
+            'content' => 'required|max:140'
         ]);
 
         Auth::user()->statuses()->create([

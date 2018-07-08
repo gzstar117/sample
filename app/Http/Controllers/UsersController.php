@@ -36,7 +36,7 @@ class UsersController extends Controller
     //用户个人信息页面
     public function show(User $user)
     {
-        $this->authorize('update', $user);
+//        $this->authorize('update', $user);
 
         $statuses = $user->statuses()->orderBy('created_at', 'desc')->paginate(30);
 
@@ -127,5 +127,31 @@ class UsersController extends Controller
         session()->flash('success', '恭喜你，激活成功！');
         return redirect()->route('users.show', [$user]);
     }
+
+    //显示关注的人的列表页面
+    function followings(User $user)
+    {
+        $users = $user->followings()->paginate(30);
+        $title = '关注的人';
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+    //显示粉丝的列表页面
+    function followers(User $user)
+    {
+        $users = $user->followers()->paginate(30);
+        $title = '粉丝';
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+
+
+
+
+
+
+
+
+
 
 }

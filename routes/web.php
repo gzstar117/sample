@@ -31,3 +31,11 @@ Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
+
+Route::get('/users/{user}/followings', 'UsersController@followings')->name('users.followings');    //显示当前用户的关注的人的列表
+Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.followers');         //显示当前用户的粉丝的列表
+
+Route::post('users/followers/{user}', 'FollowersController@store')->name('followers.store');    //执行关注某人的操作
+Route::delete('users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');//执行取消关注某人的操作
+
+

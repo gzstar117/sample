@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword;
 use App\Models\Status;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -61,6 +62,52 @@ class User extends Authenticatable
     //取得用户的微博(status)的信息流
     public function feed()
     {
-        return $this->statuses()->orderBy('created_at', 'desc');
+        $user_ids = Auth::user()->followings->pluck('id')->toArray();
+        array_push($user_ids, Auth::user()->id);
+
+        // with() 是预加载 User模型的数据
+        return Status::whereIn('user_id', $user_ids)->with('user')->orderBy('created_at', 'desc');
     }
+
+    //关联 用户-粉丝 模型(根据被关注的人找粉丝)
+    public function followers()
+    {
+        //第三个参数是"被关注的人的ID", 第四个参数是"粉丝的ID", ********  可以理解为: 根据 "被关注的人找粉丝" 来理解记忆这函数的意思
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+    }
+
+    //关联 用户-粉丝 模型(根据粉丝找关注的人)
+    public function followings()
+    {
+        //第三个参数是"粉丝的ID", 第四个参数是"被关注的人的ID", ********  可以理解为: 根据 "根据粉丝找关注的人" 来理解记忆这函数的意思
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+    }
+
+
+    //执行 - 当前用户去关注某些人, $user_ids 是要关注的人的ID集合
+    public function follow($user_ids)
+    {
+        if (!is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        $this->followings()->sync($user_ids, false);
+    }
+
+    //执行 - 当前用户去取消关注某些人, $user_ids 是要取消关注的人的ID集合
+    public function unfollow($user_ids)
+    {
+        if (!is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        $this->followings()->detach($user_ids);
+    }
+
+    //判断当前用户是否关注某一个人, $user_id 是被关注的人的ID
+    public function isFollowing($user_id)
+    {
+        //contains() 意思指判断 $user_id 是否在 当前用户的 关注人列表集合里面
+        return $this->followings->contains($user_id);
+    }
+
+
 }
